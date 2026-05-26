@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, CreditCard } from "lucide-react";
+import { ChevronLeft, ChevronRight, CreditCard, X, HelpCircle } from "lucide-react";
 import coinP from "@/assets/coin-p.png";
 import pixLogo from "@/assets/pix-logo.webp";
 import pagbankLogo from "@/assets/pagbank-logo.webp";
@@ -14,9 +14,15 @@ export const Route = createFileRoute("/resgatar")({
 const TARGET = 2800;
 const DURATION = 1800;
 
+type Sheet = null | "method" | "pix";
+type PixKeyType = "CPF" | "E-mail" | "Telefone" | "Chave aleatória";
+
 function Resgatar() {
   const [amount, setAmount] = useState(0);
   const [selected, setSelected] = useState<number>(2800);
+  const [sheet, setSheet] = useState<Sheet>(null);
+  const [keyType, setKeyType] = useState<PixKeyType | null>(null);
+  const [pixKey, setPixKey] = useState("");
 
   useEffect(() => {
     const start = performance.now();

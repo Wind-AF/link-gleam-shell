@@ -7,7 +7,7 @@ import receita from "@/assets/receita-federal.webp";
 import lucasImg from "@/assets/testimonial-lucas.webp";
 import amandaImg from "@/assets/testimonial-amanda.webp";
 import carlaImg from "@/assets/testimonial-carla.webp";
-import rafaelImg from "@/assets/social-proof-4.webp";
+import rafaelImg from "@/assets/testimonial-rafael.webp";
 import sp1 from "@/assets/social-proof-1.webp";
 import sp2 from "@/assets/social-proof-2.webp";
 import sp3 from "@/assets/social-proof-3.webp";

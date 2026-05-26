@@ -352,9 +352,12 @@ function Resgatar() {
             </div>
           ))}
 
-          <button className="w-full h-[50px] bg-pink text-white font-bold text-[15px] rounded-[10px] mt-6 active:scale-[0.98] transition-transform">
+          <Link
+            to="/confirmar-saque"
+            className="w-full h-[50px] bg-pink text-white font-bold text-[15px] rounded-[10px] mt-6 active:scale-[0.98] transition-transform flex items-center justify-center"
+          >
             Confirmar para sacar
-          </button>
+          </Link>
         </div>
       </div>
     </div>

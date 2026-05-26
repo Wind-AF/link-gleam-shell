@@ -7,10 +7,11 @@ import receita from "@/assets/receita-federal.webp";
 import lucasImg from "@/assets/testimonial-lucas.webp";
 import amandaImg from "@/assets/testimonial-amanda.webp";
 import carlaImg from "@/assets/testimonial-carla.webp";
-import rafaelImg from "@/assets/social-proof-4.webp";
+import rafaelImg from "@/assets/testimonial-rafael.webp";
 import sp1 from "@/assets/social-proof-1.webp";
 import sp2 from "@/assets/social-proof-2.webp";
 import sp3 from "@/assets/social-proof-3.webp";
+import sp4 from "@/assets/social-proof-4.webp";
 
 export const Route = createFileRoute("/confirmar-saque")({
   component: ConfirmarSaque,
@@ -230,7 +231,7 @@ function ConfirmarSaque() {
 
           <div className="flex items-center gap-3 mt-5 pt-4 border-t border-[#eee]">
             <div className="flex -space-x-2">
-              {[sp1, sp2, sp3, rafaelImg].map((src, i) => (
+              {[sp1, sp2, sp3, sp4].map((src, i) => (
                 <img
                   key={i}
                   src={src}

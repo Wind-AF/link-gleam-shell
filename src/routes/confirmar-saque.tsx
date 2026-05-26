@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ChevronLeft, Clock, Lock } from "lucide-react";
+import { ChevronLeft, Clock, Lock, Copy, Loader2 } from "lucide-react";
 import coinP from "@/assets/coin-p.png";
 import govbr from "@/assets/govbr-logo.webp";
 import receita from "@/assets/receita-federal.webp";

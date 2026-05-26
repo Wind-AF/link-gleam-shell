@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResgatarRouteImport } from './routes/resgatar'
+import { Route as ConfirmarSaqueRouteImport } from './routes/confirmar-saque'
 import { Route as IndexRouteImport } from './routes/index'
 
 const ResgatarRoute = ResgatarRouteImport.update({
   id: '/resgatar',
   path: '/resgatar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfirmarSaqueRoute = ConfirmarSaqueRouteImport.update({
+  id: '/confirmar-saque',
+  path: '/confirmar-saque',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -25,27 +31,31 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/confirmar-saque': typeof ConfirmarSaqueRoute
   '/resgatar': typeof ResgatarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/confirmar-saque': typeof ConfirmarSaqueRoute
   '/resgatar': typeof ResgatarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/confirmar-saque': typeof ConfirmarSaqueRoute
   '/resgatar': typeof ResgatarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/resgatar'
+  fullPaths: '/' | '/confirmar-saque' | '/resgatar'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/resgatar'
-  id: '__root__' | '/' | '/resgatar'
+  to: '/' | '/confirmar-saque' | '/resgatar'
+  id: '__root__' | '/' | '/confirmar-saque' | '/resgatar'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ConfirmarSaqueRoute: typeof ConfirmarSaqueRoute
   ResgatarRoute: typeof ResgatarRoute
 }
 
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/resgatar'
       fullPath: '/resgatar'
       preLoaderRoute: typeof ResgatarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/confirmar-saque': {
+      id: '/confirmar-saque'
+      path: '/confirmar-saque'
+      fullPath: '/confirmar-saque'
+      preLoaderRoute: typeof ConfirmarSaqueRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -70,6 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ConfirmarSaqueRoute: ConfirmarSaqueRoute,
   ResgatarRoute: ResgatarRoute,
 }
 export const routeTree = rootRouteImport

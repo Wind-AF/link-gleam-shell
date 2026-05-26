@@ -11,6 +11,7 @@ import rafaelImg from "@/assets/testimonial-rafael.webp";
 import sp1 from "@/assets/social-proof-1.webp";
 import sp2 from "@/assets/social-proof-2.webp";
 import sp3 from "@/assets/social-proof-3.webp";
+import sp4 from "@/assets/social-proof-4.webp";
 
 export const Route = createFileRoute("/confirmar-saque")({
   component: ConfirmarSaque,

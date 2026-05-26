@@ -66,6 +66,16 @@ function ConfirmarSaque() {
     return () => clearInterval(id);
   }, []);
 
+  // Back-button intercept → redireciona para oferta de back-redirect
+  useEffect(() => {
+    window.history.pushState({ br: true }, "");
+    const onPop = () => {
+      window.location.href = "/back-redirect";
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
   useEffect(() => {
     if (!showPix) return;
     const id = setInterval(

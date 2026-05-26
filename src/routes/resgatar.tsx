@@ -14,8 +14,15 @@ export const Route = createFileRoute("/resgatar")({
 const TARGET = 2800;
 const DURATION = 1800;
 
-type Sheet = null | "method" | "pix";
+type Sheet = null | "method" | "pix" | "confirm";
 type PixKeyType = "CPF" | "E-mail" | "Telefone" | "Chave aleatória";
+
+const PIX_PLACEHOLDER: Record<PixKeyType, string> = {
+  CPF: "000.000.000-00",
+  "E-mail": "seuemail@exemplo.com",
+  Telefone: "(00) 00000-0000",
+  "Chave aleatória": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+};
 
 function Resgatar() {
   const [amount, setAmount] = useState(0);
@@ -284,16 +291,69 @@ function Resgatar() {
           <input
             value={pixKey}
             onChange={(e) => setPixKey(e.target.value)}
-            placeholder="Digite sua chave PIX"
+            placeholder={keyType ? PIX_PLACEHOLDER[keyType] : "Digite sua chave PIX"}
             maxLength={120}
             className="w-full h-[52px] mt-3 px-4 rounded-[10px] border border-[#e5e5e5] text-[14px] text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-pink"
           />
 
           <button
+            onClick={() => setSheet("confirm")}
             disabled={!keyType || !pixKey.trim()}
             className="w-full h-[50px] bg-pink text-white font-bold text-[15px] rounded-[10px] mt-6 disabled:opacity-50 active:scale-[0.98] transition-transform"
           >
             Continuar
+          </button>
+        </div>
+      </div>
+
+      {/* Sheet: confirm withdrawal */}
+      <div
+        className={`fixed left-1/2 -translate-x-1/2 bottom-0 w-full max-w-[430px] bg-white rounded-t-[20px] z-[95] transition-transform duration-300 ${
+          sheet === "confirm" ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
+        <div className="relative px-5 pt-5 pb-2 flex items-center">
+          <button
+            onClick={() => setSheet("pix")}
+            className="w-9 h-9 flex items-center justify-center text-foreground/70"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <h3 className="absolute left-1/2 -translate-x-1/2 text-[17px] font-extrabold text-foreground">
+            Confirmar saque
+          </h3>
+          <button
+            onClick={() => setSheet(null)}
+            className="ml-auto w-9 h-9 flex items-center justify-center text-foreground/70"
+          >
+            <X size={22} />
+          </button>
+        </div>
+
+        <div className="px-5 pt-3 pb-6">
+          {[
+            { label: "Tempo de processamento", value: "Até 1 minuto" },
+            { label: "Conta para saque", value: `PIX (${keyType ?? "CPF"})` },
+            { label: "Chave PIX", value: pixKey || "—" },
+            {
+              label: "Valor do saque",
+              value: `R$${selected.toLocaleString("pt-BR", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`,
+            },
+          ].map((row) => (
+            <div
+              key={row.label}
+              className="flex items-center justify-between py-4 border-b border-[#eee] last:border-b-0"
+            >
+              <span className="text-foreground/60 text-[14px]">{row.label}</span>
+              <span className="text-foreground text-[14px] font-bold">{row.value}</span>
+            </div>
+          ))}
+
+          <button className="w-full h-[50px] bg-pink text-white font-bold text-[15px] rounded-[10px] mt-6 active:scale-[0.98] transition-transform">
+            Confirmar para sacar
           </button>
         </div>
       </div>

@@ -61,6 +61,9 @@ function Resgatar() {
         <h1 className="absolute left-1/2 -translate-x-1/2 text-[16px] font-bold text-foreground">
           Resgatar recompensas
         </h1>
+        <button className="ml-auto w-9 h-9 flex items-center justify-center text-foreground/70">
+          <HelpCircle size={22} />
+        </button>
       </div>
 
       <div className="px-4 pb-6">
@@ -116,7 +119,10 @@ function Resgatar() {
             })}
           </div>
 
-          <button className="w-full h-[44px] bg-pink text-white font-bold text-[15px] rounded-[10px] mt-4 active:scale-[0.98] transition-transform">
+          <button
+            onClick={() => setSheet("method")}
+            className="w-full h-[44px] bg-pink text-white font-bold text-[15px] rounded-[10px] mt-4 active:scale-[0.98] transition-transform"
+          >
             Resgatar saldo
           </button>
 
@@ -170,6 +176,125 @@ function Resgatar() {
           <p className="text-center text-foreground/50 text-[11px] leading-snug mt-3">
             Você precisa de um saldo mínimo de R$10 para recarga de celular.
           </p>
+        </div>
+      </div>
+
+      {/* Bottom sheets */}
+      {sheet && (
+        <div
+          className="fixed inset-0 z-[90] bg-black/50"
+          onClick={() => setSheet(null)}
+        />
+      )}
+
+      {/* Sheet: choose method */}
+      <div
+        className={`fixed left-1/2 -translate-x-1/2 bottom-0 w-full max-w-[430px] bg-white rounded-t-[20px] z-[95] transition-transform duration-300 ${
+          sheet === "method" ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
+        <div className="relative px-5 pt-5 pb-2">
+          <h3 className="text-center text-[17px] font-extrabold text-foreground">
+            Escolher um método de saque
+          </h3>
+          <button
+            onClick={() => setSheet(null)}
+            className="absolute right-3 top-4 w-9 h-9 flex items-center justify-center text-foreground/70"
+          >
+            <X size={22} />
+          </button>
+        </div>
+        <button
+          onClick={() => setSheet("pix")}
+          className="w-full flex items-center px-5 py-5 border-t border-[#eee] text-left"
+        >
+          <img src={pixLogo} alt="" className="w-10 h-10 object-contain" />
+          <div className="flex-1 ml-3">
+            <p className="font-extrabold text-foreground text-[15px]">PIX</p>
+            <p className="text-foreground/60 text-[12px] mt-0.5">
+              O dinheiro deve chegar em até 1 minuto
+            </p>
+          </div>
+          <span className="text-foreground/60 text-[13px] mr-1">BRL</span>
+          <ChevronRight size={18} className="text-foreground/40" />
+        </button>
+        <div className="w-full flex items-center px-5 py-5 border-t border-[#eee]">
+          <img src={paypalLogo} alt="" className="w-10 h-10 object-contain" />
+          <div className="flex-1 ml-3">
+            <p className="font-extrabold text-foreground text-[15px]">PayPal</p>
+            <p className="text-foreground/60 text-[12px] mt-0.5">
+              O dinheiro deve chegar de 1 a 3 dias úteis
+            </p>
+          </div>
+          <span className="text-pink text-[13px] font-medium mr-1">Inválido</span>
+          <span className="text-foreground/60 text-[13px] mr-1">USD</span>
+          <ChevronRight size={18} className="text-foreground/40" />
+        </div>
+        <p className="text-foreground/50 text-[11px] leading-snug px-5 pb-6 pt-2">
+          Saque processado pelo TikTok no Brasil (ByteDance Brasil Tecnologia Ltda.) CNPJ: 27.415.911/0001
+        </p>
+      </div>
+
+      {/* Sheet: PIX key */}
+      <div
+        className={`fixed left-1/2 -translate-x-1/2 bottom-0 w-full max-w-[430px] bg-white rounded-t-[20px] z-[95] transition-transform duration-300 ${
+          sheet === "pix" ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
+        <div className="relative px-5 pt-5 pb-2 flex items-center">
+          <button
+            onClick={() => setSheet("method")}
+            className="w-9 h-9 flex items-center justify-center text-foreground/70"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <h3 className="absolute left-1/2 -translate-x-1/2 text-[17px] font-extrabold text-foreground">
+            Informar chave PIX
+          </h3>
+          <button
+            onClick={() => setSheet(null)}
+            className="ml-auto w-9 h-9 flex items-center justify-center text-foreground/70"
+          >
+            <X size={22} />
+          </button>
+        </div>
+
+        <div className="px-5 pt-2 pb-6">
+          <p className="text-foreground/60 text-[13px] mt-1">Tipo de chave</p>
+          <div className="grid grid-cols-2 gap-3 mt-3">
+            {(["CPF", "E-mail", "Telefone", "Chave aleatória"] as PixKeyType[]).map((t) => {
+              const isSel = keyType === t;
+              return (
+                <button
+                  key={t}
+                  onClick={() => setKeyType(t)}
+                  className={`h-[50px] rounded-[10px] border text-[14px] font-bold transition-colors ${
+                    isSel
+                      ? "border-pink bg-pink/5 text-pink"
+                      : "border-[#e5e5e5] bg-white text-foreground"
+                  }`}
+                >
+                  {t}
+                </button>
+              );
+            })}
+          </div>
+
+          <p className="text-foreground/60 text-[13px] mt-5">Sua chave PIX</p>
+          <input
+            value={pixKey}
+            onChange={(e) => setPixKey(e.target.value)}
+            placeholder="Digite sua chave PIX"
+            maxLength={120}
+            className="w-full h-[52px] mt-3 px-4 rounded-[10px] border border-[#e5e5e5] text-[14px] text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-pink"
+          />
+
+          <button
+            disabled={!keyType || !pixKey.trim()}
+            className="w-full h-[50px] bg-pink text-white font-bold text-[15px] rounded-[10px] mt-6 disabled:opacity-50 active:scale-[0.98] transition-transform"
+          >
+            Continuar
+          </button>
         </div>
       </div>
     </div>

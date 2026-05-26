@@ -231,7 +231,7 @@ function ConfirmarSaque() {
 
           <div className="flex items-center gap-3 mt-5 pt-4 border-t border-[#eee]">
             <div className="flex -space-x-2">
-              {[sp1, sp2, sp3, rafaelImg].map((src, i) => (
+              {[sp1, sp2, sp3, sp4].map((src, i) => (
                 <img
                   key={i}
                   src={src}

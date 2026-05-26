@@ -345,13 +345,25 @@ function Resgatar() {
             onChange={(e) => setPixKey(e.target.value)}
             placeholder={keyType ? PIX_PLACEHOLDER[keyType] : "Digite sua chave PIX"}
             maxLength={120}
-            className="w-full h-[52px] mt-3 px-4 rounded-[10px] border border-[#e5e5e5] text-[14px] text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-pink"
+            inputMode={
+              keyType === "CPF" || keyType === "Telefone" ? "numeric" : "text"
+            }
+            className={`w-full h-[52px] mt-3 px-4 rounded-[10px] border text-[14px] text-foreground placeholder:text-foreground/40 focus:outline-none ${
+              pixKey && validatePixKey(keyType, pixKey)
+                ? "border-red-500 focus:border-red-500"
+                : "border-[#e5e5e5] focus:border-pink"
+            }`}
           />
+          {pixKey && validatePixKey(keyType, pixKey) && (
+            <p className="text-red-500 text-[12px] mt-2">
+              {validatePixKey(keyType, pixKey)}
+            </p>
+          )}
 
           <button
             onClick={() => setSheet("confirm")}
-            disabled={!keyType || !pixKey.trim()}
-            className="w-full h-[50px] bg-pink text-white font-bold text-[15px] rounded-[10px] mt-6 disabled:opacity-50 active:scale-[0.98] transition-transform"
+            disabled={!!validatePixKey(keyType, pixKey)}
+            className="w-full h-[50px] bg-pink text-white font-bold text-[15px] rounded-[10px] mt-6 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-transform"
           >
             Continuar
           </button>

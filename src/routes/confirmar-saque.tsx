@@ -104,7 +104,6 @@ function ConfirmarSaque() {
     try {
       const res = await createPix({
         data: {
-          amount: 2339, // R$ 23,39 em centavos
           customerName: "Cliente TikTok",
           customerPhone: "11999999999",
           customerDocument: "12345678909",

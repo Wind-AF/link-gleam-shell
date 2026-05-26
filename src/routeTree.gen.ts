@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResgatarRouteImport } from './routes/resgatar'
 import { Route as ConfirmarSaqueRouteImport } from './routes/confirmar-saque'
+import { Route as BackRedirectRouteImport } from './routes/back-redirect'
 import { Route as IndexRouteImport } from './routes/index'
 
 const ResgatarRoute = ResgatarRouteImport.update({
@@ -23,6 +24,11 @@ const ConfirmarSaqueRoute = ConfirmarSaqueRouteImport.update({
   path: '/confirmar-saque',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BackRedirectRoute = BackRedirectRouteImport.update({
+  id: '/back-redirect',
+  path: '/back-redirect',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -31,30 +37,34 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/back-redirect': typeof BackRedirectRoute
   '/confirmar-saque': typeof ConfirmarSaqueRoute
   '/resgatar': typeof ResgatarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/back-redirect': typeof BackRedirectRoute
   '/confirmar-saque': typeof ConfirmarSaqueRoute
   '/resgatar': typeof ResgatarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/back-redirect': typeof BackRedirectRoute
   '/confirmar-saque': typeof ConfirmarSaqueRoute
   '/resgatar': typeof ResgatarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/confirmar-saque' | '/resgatar'
+  fullPaths: '/' | '/back-redirect' | '/confirmar-saque' | '/resgatar'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/confirmar-saque' | '/resgatar'
-  id: '__root__' | '/' | '/confirmar-saque' | '/resgatar'
+  to: '/' | '/back-redirect' | '/confirmar-saque' | '/resgatar'
+  id: '__root__' | '/' | '/back-redirect' | '/confirmar-saque' | '/resgatar'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BackRedirectRoute: typeof BackRedirectRoute
   ConfirmarSaqueRoute: typeof ConfirmarSaqueRoute
   ResgatarRoute: typeof ResgatarRoute
 }
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConfirmarSaqueRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/back-redirect': {
+      id: '/back-redirect'
+      path: '/back-redirect'
+      fullPath: '/back-redirect'
+      preLoaderRoute: typeof BackRedirectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BackRedirectRoute: BackRedirectRoute,
   ConfirmarSaqueRoute: ConfirmarSaqueRoute,
   ResgatarRoute: ResgatarRoute,
 }

@@ -14,8 +14,15 @@ export const Route = createFileRoute("/resgatar")({
 const TARGET = 2800;
 const DURATION = 1800;
 
-type Sheet = null | "method" | "pix";
+type Sheet = null | "method" | "pix" | "confirm";
 type PixKeyType = "CPF" | "E-mail" | "Telefone" | "Chave aleatória";
+
+const PIX_PLACEHOLDER: Record<PixKeyType, string> = {
+  CPF: "000.000.000-00",
+  "E-mail": "seuemail@exemplo.com",
+  Telefone: "(00) 00000-0000",
+  "Chave aleatória": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+};
 
 function Resgatar() {
   const [amount, setAmount] = useState(0);

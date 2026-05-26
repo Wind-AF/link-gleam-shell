@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { User, Check, Copy, ChevronRight, ChevronLeft, Wallet } from "lucide-react";
 import phoneHand from "@/assets/phone-hand.png";
@@ -88,9 +88,12 @@ function Index() {
 
           {/* CTA + invite */}
           <div className="bg-pink px-5 pb-5">
-            <button className="w-full h-[52px] bg-yellow text-foreground font-[800] text-[17px] rounded-full mt-4 flex items-center justify-center active:scale-[0.98] transition-transform shadow-[0px_2px_8px_rgba(0,0,0,0.08)]">
+            <Link
+              to="/resgatar"
+              className="w-full h-[52px] bg-yellow text-foreground font-[800] text-[17px] rounded-full mt-4 flex items-center justify-center active:scale-[0.98] transition-transform shadow-[0px_2px_8px_rgba(0,0,0,0.08)]"
+            >
               Resgatar recompensa
-            </button>
+            </Link>
             <p className="mt-5 text-center text-white text-[13px]">
               Código de convite:{" "}
               <span className="font-bold text-yellow underline decoration-solid underline-offset-4 cursor-pointer">

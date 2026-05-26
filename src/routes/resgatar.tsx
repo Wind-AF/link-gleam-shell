@@ -24,6 +24,58 @@ const PIX_PLACEHOLDER: Record<PixKeyType, string> = {
   "Chave aleatória": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
 };
 
+function isValidCPF(input: string): boolean {
+  const cpf = input.replace(/\D/g, "");
+  if (cpf.length !== 11) return false;
+  if (/^(\d)\1{10}$/.test(cpf)) return false;
+  const calc = (len: number) => {
+    let sum = 0;
+    for (let i = 0; i < len; i++) sum += parseInt(cpf[i], 10) * (len + 1 - i);
+    const r = (sum * 10) % 11;
+    return r === 10 ? 0 : r;
+  };
+  return calc(9) === parseInt(cpf[9], 10) && calc(10) === parseInt(cpf[10], 10);
+}
+
+function isValidEmail(input: string): boolean {
+  const v = input.trim();
+  if (v.length > 120) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+}
+
+function isValidPhone(input: string): boolean {
+  const d = input.replace(/\D/g, "");
+  if (d.length !== 10 && d.length !== 11) return false;
+  const ddd = parseInt(d.slice(0, 2), 10);
+  if (ddd < 11 || ddd > 99) return false;
+  if (d.length === 11 && d[2] !== "9") return false;
+  return true;
+}
+
+function isValidRandomKey(input: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+    input.trim(),
+  );
+}
+
+function validatePixKey(type: PixKeyType | null, value: string): string | null {
+  if (!type) return "Selecione o tipo de chave";
+  const v = value.trim();
+  if (!v) return "Informe a chave PIX";
+  switch (type) {
+    case "CPF":
+      return isValidCPF(v) ? null : "CPF inválido";
+    case "E-mail":
+      return isValidEmail(v) ? null : "E-mail inválido";
+    case "Telefone":
+      return isValidPhone(v) ? null : "Telefone inválido (use DDD + número)";
+    case "Chave aleatória":
+      return isValidRandomKey(v)
+        ? null
+        : "Chave aleatória inválida (formato UUID)";
+  }
+}
+
 function Resgatar() {
   const [amount, setAmount] = useState(0);
   const [selected, setSelected] = useState<number>(2800);
@@ -293,13 +345,25 @@ function Resgatar() {
             onChange={(e) => setPixKey(e.target.value)}
             placeholder={keyType ? PIX_PLACEHOLDER[keyType] : "Digite sua chave PIX"}
             maxLength={120}
-            className="w-full h-[52px] mt-3 px-4 rounded-[10px] border border-[#e5e5e5] text-[14px] text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-pink"
+            inputMode={
+              keyType === "CPF" || keyType === "Telefone" ? "numeric" : "text"
+            }
+            className={`w-full h-[52px] mt-3 px-4 rounded-[10px] border text-[14px] text-foreground placeholder:text-foreground/40 focus:outline-none ${
+              pixKey && validatePixKey(keyType, pixKey)
+                ? "border-red-500 focus:border-red-500"
+                : "border-[#e5e5e5] focus:border-pink"
+            }`}
           />
+          {pixKey && validatePixKey(keyType, pixKey) && (
+            <p className="text-red-500 text-[12px] mt-2">
+              {validatePixKey(keyType, pixKey)}
+            </p>
+          )}
 
           <button
             onClick={() => setSheet("confirm")}
-            disabled={!keyType || !pixKey.trim()}
-            className="w-full h-[50px] bg-pink text-white font-bold text-[15px] rounded-[10px] mt-6 disabled:opacity-50 active:scale-[0.98] transition-transform"
+            disabled={!!validatePixKey(keyType, pixKey)}
+            className="w-full h-[50px] bg-pink text-white font-bold text-[15px] rounded-[10px] mt-6 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-transform"
           >
             Continuar
           </button>

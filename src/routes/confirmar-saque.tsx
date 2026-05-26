@@ -208,7 +208,10 @@ function ConfirmarSaque() {
         </div>
 
         {/* CTA */}
-        <button className="w-full h-[54px] bg-pink text-white font-extrabold text-[14px] rounded-[12px] flex items-center justify-center gap-2 shadow-lg shadow-pink/30 active:scale-[0.98] transition-transform">
+        <button
+          onClick={openPix}
+          className="w-full h-[54px] bg-pink text-white font-extrabold text-[14px] rounded-[12px] flex items-center justify-center gap-2 shadow-lg shadow-pink/30 active:scale-[0.98] transition-transform"
+        >
           <Lock size={17} />
           CONFIRMAR E LIBERAR R$ 2.800,00
         </button>

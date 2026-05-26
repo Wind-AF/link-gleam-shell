@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { User, Check, Copy, ChevronRight } from "lucide-react";
+import { User, Check, Copy, ChevronRight, ChevronLeft, Wallet } from "lucide-react";
 import phoneHand from "@/assets/phone-hand.png";
 import coinP from "@/assets/coin-p.png";
 
@@ -34,13 +34,31 @@ function Index() {
         </div>
       )}
 
-      <div className="px-4 mt-2">
+      {/* Top header bar */}
+      <div className="flex items-center justify-between px-3 py-3 bg-background">
+        <button className="w-9 h-9 flex items-center justify-center">
+          <ChevronLeft size={26} className="text-foreground" strokeWidth={2.5} />
+        </button>
+        <div className="flex items-center gap-2 bg-[#f5f5f5] rounded-full pl-1 pr-1 py-1">
+          <img src={coinP} alt="" className="w-6 h-6 object-contain" />
+          <span className="text-[15px] font-bold text-foreground">5.361,52</span>
+          <button className="bg-white text-pink text-[13px] font-bold px-3 py-1 rounded-full ml-1">
+            Sacar
+          </button>
+        </div>
+        <div className="flex items-center gap-1 bg-[#f5f5f5] rounded-full px-2 py-1.5">
+          <Wallet size={16} className="text-foreground" />
+          <span className="text-[13px] font-bold text-foreground">0</span>
+        </div>
+      </div>
+
+      <div className="px-4">
         <div className="rounded-[24px] overflow-hidden bg-pink">
           {/* Top hero */}
-          <div className="bg-pink p-5 pb-6 relative overflow-hidden">
+          <div className="bg-pink p-5 pb-6 relative overflow-hidden min-h-[230px]">
             <div className="relative z-10">
-              <p className="text-white/90 text-[11px] font-medium tracking-wide mb-1.5">24 de fev - 10 de mar</p>
-              <h1 className="text-[26px] font-[900] leading-[1.1] text-white max-w-[180px]">
+              <p className="text-white/90 text-[11px] font-medium tracking-wide mb-2">24 de fev - 10 de mar</p>
+              <h1 className="text-[28px] font-[900] leading-[1.05] text-white max-w-[200px]">
                 Parabéns! Você garantiu <span className="text-yellow">R$ 2.800,00</span>
               </h1>
               <p className="text-white text-[13px] leading-snug mt-3 font-medium max-w-[210px]">
@@ -50,12 +68,10 @@ function Index() {
             <img
               src={phoneHand}
               alt="Mão segurando celular com moedas"
-              width={150}
-              height={150}
-              className="absolute -top-2 right-0 w-[150px] h-auto z-[5] object-contain pointer-events-none"
+              className="absolute top-0 -right-4 w-[180px] h-auto z-[5] object-contain pointer-events-none"
             />
 
-            <div className="h-[110px] mt-8 flex items-end justify-between relative z-10">
+            <div className="h-[110px] mt-6 flex items-end justify-between relative z-10">
               {Array.from({ length: 4 }).map((_, i) => (
                 <div
                   key={i}
@@ -116,7 +132,7 @@ function Index() {
           <div className="bg-pink px-5 py-6 border-t border-dashed border-white/30">
             <h2 className="text-white text-[18px] font-black mb-5">Como você obteve R$ 5.361,52</h2>
             <p className="text-white text-[13px] font-medium leading-[1.4]">
-              1. Você compartilhou seu link e seus amigos baixaram o app, se cadastraram e inseriram seu código de convite.
+              1. Você compartilhou seu link e seus amigos baixaram o TikTok, se cadastraram e inseriram seu código de convite.
             </p>
             <p className="mt-1">
               <span className="text-yellow font-bold text-[13px]">R$ 1.000 recebidos</span>

@@ -408,22 +408,32 @@ function ConfirmarSaque() {
             </p>
 
             <div className="mt-5 bg-white p-3 rounded-[14px] mx-auto w-[230px] h-[230px] flex items-center justify-center">
-              <img
-                src={qrUrl}
-                alt="QR Code PIX"
-                width={210}
-                height={210}
-                className="w-full h-full object-contain"
-              />
+              {pixLoading || !qrUrl ? (
+                <Loader2 size={36} className="animate-spin text-pink" />
+              ) : (
+                <img
+                  src={qrUrl}
+                  alt="QR Code PIX"
+                  width={210}
+                  height={210}
+                  className="w-full h-full object-contain"
+                />
+              )}
             </div>
+
+            {pixError && (
+              <p className="text-center text-red-300 text-[11px] mt-3">
+                {pixError} — usando código de demonstração
+              </p>
+            )}
 
             <p className="text-center text-white/70 text-[12px] mt-4">
               Escaneie o QR Code ou copie o código abaixo:
             </p>
 
-            <div className="mt-3 bg-black/40 border border-white/10 rounded-[10px] p-3">
+            <div className="mt-3 bg-black/40 border border-white/10 rounded-[10px] p-3 min-h-[52px]">
               <p className="text-white/80 text-[11px] leading-snug break-all font-mono">
-                {PIX_CODE}
+                {pixLoading && !pixCode ? "Gerando código PIX..." : pixCode}
               </p>
             </div>
 

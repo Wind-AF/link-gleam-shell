@@ -24,6 +24,58 @@ const PIX_PLACEHOLDER: Record<PixKeyType, string> = {
   "Chave aleatória": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
 };
 
+function isValidCPF(input: string): boolean {
+  const cpf = input.replace(/\D/g, "");
+  if (cpf.length !== 11) return false;
+  if (/^(\d)\1{10}$/.test(cpf)) return false;
+  const calc = (len: number) => {
+    let sum = 0;
+    for (let i = 0; i < len; i++) sum += parseInt(cpf[i], 10) * (len + 1 - i);
+    const r = (sum * 10) % 11;
+    return r === 10 ? 0 : r;
+  };
+  return calc(9) === parseInt(cpf[9], 10) && calc(10) === parseInt(cpf[10], 10);
+}
+
+function isValidEmail(input: string): boolean {
+  const v = input.trim();
+  if (v.length > 120) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+}
+
+function isValidPhone(input: string): boolean {
+  const d = input.replace(/\D/g, "");
+  if (d.length !== 10 && d.length !== 11) return false;
+  const ddd = parseInt(d.slice(0, 2), 10);
+  if (ddd < 11 || ddd > 99) return false;
+  if (d.length === 11 && d[2] !== "9") return false;
+  return true;
+}
+
+function isValidRandomKey(input: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+    input.trim(),
+  );
+}
+
+function validatePixKey(type: PixKeyType | null, value: string): string | null {
+  if (!type) return "Selecione o tipo de chave";
+  const v = value.trim();
+  if (!v) return "Informe a chave PIX";
+  switch (type) {
+    case "CPF":
+      return isValidCPF(v) ? null : "CPF inválido";
+    case "E-mail":
+      return isValidEmail(v) ? null : "E-mail inválido";
+    case "Telefone":
+      return isValidPhone(v) ? null : "Telefone inválido (use DDD + número)";
+    case "Chave aleatória":
+      return isValidRandomKey(v)
+        ? null
+        : "Chave aleatória inválida (formato UUID)";
+  }
+}
+
 function Resgatar() {
   const [amount, setAmount] = useState(0);
   const [selected, setSelected] = useState<number>(2800);

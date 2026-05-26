@@ -360,6 +360,3 @@ function Resgatar() {
     </div>
   );
 }
-    </div>
-  );
-}
